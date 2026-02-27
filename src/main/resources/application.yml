@@ -1,19 +1,62 @@
 spring:
-  # Configuration Email
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: email
-    password:  pass # Mot de passe d'application Google
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-            required: true
-        transport:
-          protocol: smtp
+    mail:
+        host: ${SPRING_MAIL_HOST}
+        port: ${SPRING_MAIL_PORT}
+        username: ${SPRING_MAIL_USERNAME}
+        password: ${SPRING_MAIL_PASSWORD}
+        properties:
+            mail:
+                smtp:
+                    auth: true
+                    starttls:
+                        enable: true
+                        required: true
+                transport:
+                    protocol: smtp
+
+    application:
+        name: blog
+
+    datasource:
+        url: ${SPRING_DATASOURCE_URL}
+        username: ${SPRING_DATASOURCE_USERNAME}
+        password: ${SPRING_DATASOURCE_PASSWORD}
+
+    jpa:
+        hibernate:
+            ddl-auto: update
+        show-sql: true
+        properties:
+            hibernate.dialect: org.hibernate.dialect.MySQL8Dialect
+
+    thymeleaf:
+        cache: false
+        encoding: UTF-8
+        mode: HTML
+
+    security:
+        user:
+            name: ${SPRING_DEFAULT_USER}
+            password: ${SPRING_DEFAULT_PASSWORD}
+
+    servlet:
+        multipart:
+            max-file-size: 5MB
+            max-request-size: 10MB
+
+    devtools:
+        restart:
+            enabled: false
+
+server:
+    port: 8080
 
 app:
-  base-url: http://localhost:8080
+    base-url: ${APP_BASE_URL}
+
+logging:
+    level:
+        org.springframework.security: DEBUG
+        org.hibernate.SQL: DEBUG
+        org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+        com.blog: DEBUG
