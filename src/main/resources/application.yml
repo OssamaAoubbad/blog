@@ -52,6 +52,8 @@ server:
 
 app:
     base-url: ${APP_BASE_URL}
+    mail:
+        from: ${MAIL_FROM}
 
 logging:
     level:
@@ -59,3 +61,9 @@ logging:
         org.hibernate.SQL: DEBUG
         org.hibernate.type.descriptor.sql.BasicBinder: TRACE
         com.blog: DEBUG
+
+
+resend:
+    api:
+        key: ${RESEND_API_KEY}
+
