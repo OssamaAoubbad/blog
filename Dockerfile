@@ -1,14 +1,23 @@
-# Base image Java 17
-FROM eclipse-temurin:17-jdk
+# Base image avec Maven et JDK
+FROM maven:3.9.3-eclipse-temurin-17 AS build
 
-# Dossier de travail
 WORKDIR /app
 
-# Copier le jar compilé
-COPY target/blog-0.0.1-SNAPSHOT.jar app.jar
+# Copier le pom et le code
+COPY pom.xml .
+COPY src ./src
 
-# Exposer le port Spring Boot
+# Build le jar
+RUN mvn clean package -DskipTests
+
+# Deuxième stage pour réduire la taille
+FROM eclipse-temurin:17-jdk
+
+WORKDIR /app
+
+# Copier le jar du stage précédent
+COPY --from=build /app/target/*.jar app.jar
+
 EXPOSE 8080
 
-# Commande pour lancer l'application
 ENTRYPOINT ["java", "-jar", "app.jar"]
