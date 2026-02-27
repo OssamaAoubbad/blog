@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(content=~{::main}, pageTitle='Accès refusé', currentPage='')}">
+<head><title>403</title></head>
+<body>
+<main th:fragment="main">
+    <div class="container py-5 text-center" style="min-height:60vh; display:flex; align-items:center; justify-content:center">
+        <div>
+            <div style="font-size:5rem; color:#e94560; font-family:'Playfair Display',serif; font-weight:700">403</div>
+            <h1 class="mb-3">Accès refusé</h1>
+            <p class="text-muted mb-4">Vous n'avez pas les droits nécessaires pour accéder à cette page.</p>
+            <div class="d-flex gap-3 justify-content-center">
+                <a th:href="@{/}" class="btn btn-outline-dark">
+                    <i class="bi bi-house me-2"></i>Accueil
+                </a>
+                <a th:href="@{/posts}" class="btn fw-semibold"
+                   style="background:#e94560; color:#fff; border-radius:8px">
+                    Voir les articles
+                </a>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

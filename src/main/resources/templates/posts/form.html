@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(content=~{::main}, pageTitle='Article', currentPage='')}">
+<head><title>Article</title></head>
+<body>
+<main th:fragment="main">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1 style="font-size:2rem"
+                        th:text="${post.id == null} ? 'Nouvel article' : 'Modifier'"></h1>
+                    <a th:href="@{/posts}" class="btn btn-sm btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-1"></i>Retour
+                    </a>
+                </div>
+
+                <div class="card border-0 shadow-sm p-4">
+                    <form th:action="${post.id == null ? '/posts/new' : '/posts/' + post.id + '/edit'}"
+                          th:object="${post}" method="post" enctype="multipart/form-data" novalidate>
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+                        <!-- Titre -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Titre <span class="text-danger">*</span></label>
+                            <input type="text" th:field="*{title}" class="form-control form-control-lg"
+                                   th:classappend="${#fields.hasErrors('title')} ? 'is-invalid'"
+                                   placeholder="Un titre accrocheur..." required/>
+                            <div class="invalid-feedback" th:errors="*{title}"></div>
+                        </div>
+
+                        <!-- Resume -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Resume</label>
+                            <textarea th:field="*{summary}" rows="2" class="form-control"
+                                      th:classappend="${#fields.hasErrors('summary')} ? 'is-invalid'"
+                                      placeholder="Un court resume de votre article..." maxlength="500"></textarea>
+                            <div class="invalid-feedback" th:errors="*{summary}"></div>
+                        </div>
+
+                        <!-- Contenu -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Contenu <span class="text-danger">*</span></label>
+                            <textarea th:field="*{content}" rows="12" class="form-control"
+                                      th:classappend="${#fields.hasErrors('content')} ? 'is-invalid'"
+                                      placeholder="Redigez votre article ici..." required></textarea>
+                            <div class="invalid-feedback" th:errors="*{content}"></div>
+                        </div>
+
+                        <!-- Image cover -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Image de couverture</label>
+                            <div th:if="${post.coverImage}" class="mb-2">
+                                <img th:src="${post.coverImage}" alt="cover" class="img-fluid rounded"
+                                     style="max-height:180px; object-fit:cover"/>
+                            </div>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-image"></i></span>
+                                <input type="file" name="coverImageFile" class="form-control"
+                                       accept=".jpg,.jpeg,.png,.gif,.webp,image/*"/>
+                            </div>
+                            <small class="text-muted">Formats: jpg, jpeg, png, gif, webp (max 5MB)</small>
+                        </div>
+
+                        <!-- Statut -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Statut</label>
+                            <select th:field="*{status}" class="form-select">
+                                <option th:each="s : ${statuses}" th:value="${s}" th:text="${s}"></option>
+                            </select>
+                        </div>
+
+                        <!-- Boutons -->
+                        <div class="d-flex gap-2 justify-content-end pt-2 border-top">
+                            <a th:href="@{/posts}" class="btn btn-outline-secondary">Annuler</a>
+                            <button type="submit" class="btn fw-semibold"
+                                    style="background:#e94560; color:#fff; border-radius:8px; min-width:140px">
+                                <i class="bi bi-check2 me-2"></i>Enregistrer
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

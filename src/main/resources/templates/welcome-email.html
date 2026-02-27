@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Bienvenue</title>
+</head>
+<body style="margin:0; padding:0; background:#f8f9fc; font-family:Arial, sans-serif; color:#2d2d2d;">
+<table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="background:#f8f9fc; padding:24px 0;">
+    <tr>
+        <td align="center">
+            <table width="600" cellpadding="0" cellspacing="0" role="presentation"
+                   style="max-width:600px; background:#ffffff; border:1px solid #e9ecef; border-radius:12px; overflow:hidden;">
+                <tr>
+                    <td style="background:#1a1a2e; padding:20px 24px; color:#fff;">
+                        <h1 style="margin:0; font-size:22px; font-weight:700;">aoubbad-blog</h1>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding:24px;">
+                        <p style="margin:0 0 14px;">Bienvenue <strong th:text="${username}">utilisateur</strong>,</p>
+                        <p style="margin:0; line-height:1.6;">
+                            Votre compte est active. Vous pouvez maintenant vous connecter et publier vos articles.
+                        </p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

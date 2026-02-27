@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(content=~{::main}, pageTitle='Inscription', currentPage='')}">
+<head><title>Inscription</title></head>
+<body>
+<main th:fragment="main">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-sm-10 col-md-8 col-lg-6">
+
+                <div class="text-center mb-4">
+                    <h1 style="font-size:2rem">Créer un compte</h1>
+                    <p class="text-muted">Rejoignez la communauté aoubbad-blog</p>
+                </div>
+
+                <div class="card border-0 shadow-sm p-4">
+                    <form th:action="@{/auth/register}" th:object="${user}" method="post" novalidate>
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+                        <div class="row g-3">
+
+                            <!-- Prénom -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Prénom</label>
+                                <input type="text" th:field="*{firstName}"
+                                       class="form-control" th:classappend="${#fields.hasErrors('firstName')} ? 'is-invalid'"
+                                       placeholder="ossama"/>
+                                <div class="invalid-feedback" th:errors="*{firstName}"></div>
+                            </div>
+
+                            <!-- Nom -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Nom</label>
+                                <input type="text" th:field="*{lastName}"
+                                       class="form-control" th:classappend="${#fields.hasErrors('lastName')} ? 'is-invalid'"
+                                       placeholder="aoubbad"/>
+                                <div class="invalid-feedback" th:errors="*{lastName}"></div>
+                            </div>
+
+                            <!-- Username -->
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">
+                                    Nom d'utilisateur <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-at"></i></span>
+                                    <input type="text" th:field="*{username}"
+                                           class="form-control"
+                                           th:classappend="${#fields.hasErrors('username') or errorUsername != null} ? 'is-invalid'"
+                                           placeholder="ossama.aoubbad" required/>
+                                    <div class="invalid-feedback"
+                                         th:if="${errorUsername != null}"
+                                         th:text="${errorUsername}">
+                                    </div>
+                                    <div class="invalid-feedback"
+                                         th:if="${errorUsername == null and #fields.hasErrors('username')}"
+                                         th:text="${#fields.errors('username')[0]}">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Email -->
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">
+                                    Email <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                    <input type="email" th:field="*{email}"
+                                           class="form-control"
+                                           th:classappend="${#fields.hasErrors('email') or errorEmail != null} ? 'is-invalid'"
+                                           placeholder="ossama.aoubbad@email.com" required/>
+                                    <div class="invalid-feedback"
+                                         th:if="${errorEmail != null}"
+                                         th:text="${errorEmail}">
+                                    </div>
+                                    <div class="invalid-feedback"
+                                         th:if="${errorEmail == null and #fields.hasErrors('email')}"
+                                         th:text="${#fields.errors('email')[0]}">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Mot de passe -->
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">
+                                    Mot de passe <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                                    <input type="password" th:field="*{password}" id="pwdInput"
+                                           class="form-control"
+                                           th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'"
+                                           placeholder="Min. 8 caractères" required/>
+                                    <button class="btn btn-outline-secondary" type="button" onclick="togglePwd()">
+                                        <i class="bi bi-eye" id="pwdEye"></i>
+                                    </button>
+                                    <div class="invalid-feedback" th:errors="*{password}"></div>
+                                </div>
+                                <div class="progress mt-2" style="height:4px">
+                                    <div class="progress-bar" id="pwdStrength" style="width:0%; transition:width 0.3s"></div>
+                                </div>
+                                <small class="text-muted" id="pwdHint"></small>
+                            </div>
+
+                        </div>
+
+                        <button type="submit" class="btn w-100 py-2 fw-semibold mt-4"
+                                style="background:#e94560; color:#fff; border-radius:8px">
+                            <i class="bi bi-person-plus me-2"></i>Créer mon compte
+                        </button>
+
+                    </form>
+
+                    <hr class="my-4"/>
+                    <p class="text-center text-muted small mb-0">
+                        Déjà inscrit ?
+                        <a th:href="@{/auth/login}" class="fw-semibold" style="color:#e94560">Se connecter</a>
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function togglePwd() {
+            const i = document.getElementById('pwdInput'), e = document.getElementById('pwdEye');
+            i.type = i.type === 'text' ? 'password' : 'text';
+            e.className = i.type === 'text' ? 'bi bi-eye-slash' : 'bi bi-eye';
+        }
+
+        document.getElementById('pwdInput').addEventListener('input', function () {
+            const v = this.value, bar = document.getElementById('pwdStrength'),
+                hint = document.getElementById('pwdHint');
+            let score = 0;
+            if (v.length >= 8) score++;
+            if (/[A-Z]/.test(v)) score++;
+            if (/[0-9]/.test(v)) score++;
+            if (/[^A-Za-z0-9]/.test(v)) score++;
+            const colors = ['#e94560','#ff9800','#ffc107','#4caf50'];
+            const labels = ['Très faible','Faible','Moyen','Fort'];
+            bar.style.width  = (score * 25) + '%';
+            bar.style.background = colors[score - 1] || '#e9ecef';
+            hint.textContent = v.length ? labels[score - 1] || '' : '';
+        });
+    </script>
+</main>
+</body>
+</html>
+

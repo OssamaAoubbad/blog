@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Verification du compte</title>
+</head>
+<body style="margin:0; padding:0; background:#f8f9fc; font-family:Arial, sans-serif; color:#2d2d2d;">
+<table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="background:#f8f9fc; padding:24px 0;">
+    <tr>
+        <td align="center">
+            <table width="600" cellpadding="0" cellspacing="0" role="presentation"
+                   style="max-width:600px; background:#ffffff; border:1px solid #e9ecef; border-radius:12px; overflow:hidden;">
+                <tr>
+                    <td style="background:#1a1a2e; padding:20px 24px; color:#fff;">
+                        <h1 style="margin:0; font-size:22px; font-weight:700;">aoubbad-blog</h1>
+                        <p style="margin:8px 0 0; color:#cfd3e7; font-size:14px;">Verification de votre compte</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding:24px;">
+                        <p style="margin:0 0 14px;">Bonjour <strong th:text="${username}">utilisateur</strong>,</p>
+                        <p style="margin:0 0 18px; line-height:1.6;">
+                            Merci pour votre inscription. Cliquez sur le bouton ci-dessous pour activer votre compte.
+                        </p>
+                        <p style="margin:0 0 22px;">
+                            <a th:href="${verificationUrl}"
+                               style="display:inline-block; background:#e94560; color:#ffffff; text-decoration:none; padding:11px 18px; border-radius:8px; font-weight:600;">
+                                Activer mon compte
+                            </a>
+                        </p>
+                        <p style="margin:0 0 8px; color:#6c757d; font-size:13px;">
+                            Si le bouton ne fonctionne pas, copiez ce lien:
+                        </p>
+                        <p style="margin:0; font-size:13px; word-break:break-all;">
+                            <a th:href="${verificationUrl}" th:text="${verificationUrl}" style="color:#1a1a2e;"></a>
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding:16px 24px; background:#f6f7fb; color:#6c757d; font-size:12px;">
+                        Ce lien expire dans 24 heures.
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

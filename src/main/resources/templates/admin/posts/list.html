@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(content=~{::main}, pageTitle='Articles - Admin', currentPage='admin')}">
+<head><title>Articles admin</title></head>
+<body>
+<main th:fragment="main">
+    <div class="container py-5">
+
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+            <div>
+                <a th:href="@{/admin}" class="text-muted text-decoration-none small">
+                    <i class="bi bi-arrow-left me-1"></i>Dashboard
+                </a>
+                <h1 class="mb-0 mt-1" style="font-size:2rem">Articles</h1>
+            </div>
+            <div class="d-flex gap-2 flex-wrap">
+                <a th:each="s : ${statuses}"
+                   th:href="@{/admin/posts(status=${s})}"
+                   class="btn btn-sm"
+                   th:classappend="${selectedStatus == s.name()} ? 'btn-dark' : 'btn-outline-dark'"
+                   th:text="${s}"></a>
+                <a th:href="@{/admin/posts}"
+                   class="btn btn-sm"
+                   th:classappend="${selectedStatus == null} ? 'btn-dark' : 'btn-outline-dark'">Tous</a>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-dark">
+                    <tr>
+                        <th>Titre</th>
+                        <th>Auteur</th>
+                        <th>Statut</th>
+                        <th>Vues</th>
+                        <th>Commentaires</th>
+                        <th>Date</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="post : ${posts}">
+                        <td>
+                            <a th:href="@{/posts/{id}(id=${post.id})}"
+                               th:text="${#strings.abbreviate(post.title, 50)}"
+                               class="text-decoration-none fw-semibold text-dark"
+                               style="font-size:0.9rem"></a>
+                        </td>
+                        <td class="small text-muted" th:text="${post.author.username}"></td>
+                        <td>
+                <span class="badge rounded-pill px-3"
+                      th:classappend="'badge-status-' + ${post.status}"
+                      th:text="${post.status}"></span>
+                        </td>
+                        <td class="small" th:text="${post.viewsCount}"></td>
+                        <td class="small" th:text="${#lists.size(post.comments)}"></td>
+                        <td class="small text-muted"
+                            th:text="${#temporals.format(post.createdAt,'dd/MM/yyyy')}"></td>
+                        <td>
+                            <div class="d-flex gap-1 justify-content-end">
+                                <a th:href="@{/posts/{id}(id=${post.id})}"
+                                   class="btn btn-sm btn-outline-secondary" title="Voir">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a th:href="@{/posts/{id}/edit(id=${post.id})}"
+                                   class="btn btn-sm btn-outline-primary" title="Modifier">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <form th:action="@{/admin/posts/{id}/delete(id=${post.id})}" method="post"
+                                      onsubmit="return confirm('Supprimer cet article ?')">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                    <button class="btn btn-sm btn-outline-danger" title="Supprimer">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(posts)}">
+                        <td colspan="7" class="text-center py-5 text-muted">Aucun article trouvé.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <nav th:if="${totalPages > 1}" class="mt-4 d-flex justify-content-center">
+            <ul class="pagination">
+                <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                    <a class="page-link"
+                       th:href="@{/admin/posts(page=${currentPage-1}, status=${selectedStatus})}">&laquo;</a>
+                </li>
+                <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                    th:classappend="${i == currentPage} ? 'active'">
+                    <a class="page-link"
+                       th:href="@{/admin/posts(page=${i}, status=${selectedStatus})}"
+                       th:text="${i + 1}"></a>
+                </li>
+                <li class="page-item" th:classappend="${currentPage == totalPages-1} ? 'disabled'">
+                    <a class="page-link"
+                       th:href="@{/admin/posts(page=${currentPage+1}, status=${selectedStatus})}">&raquo;</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</main>
+</body>
+</html>

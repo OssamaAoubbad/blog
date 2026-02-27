@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(content=~{::main}, pageTitle='Compte active', currentPage='')}">
+<head><title>Compte active</title></head>
+<body>
+<main th:fragment="main">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card border-0 shadow-sm p-4 text-center">
+                    <div class="mb-3 text-success"><i class="bi bi-check-circle-fill fs-1"></i></div>
+                    <h1 class="h3 mb-2">Compte active</h1>
+                    <p class="text-muted mb-4">Votre email est verifie. Vous pouvez maintenant vous connecter.</p>
+                    <a th:href="@{/auth/login}" class="btn fw-semibold"
+                       style="background:#e94560; color:#fff; border-radius:8px;">
+                        Aller a la connexion
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(content=~{::main}, pageTitle='Utilisateurs - Admin', currentPage='admin')}">
+<head><title>Utilisateurs</title></head>
+<body>
+<main th:fragment="main">
+  <div class="container py-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+      <div>
+        <a th:href="@{/admin}" class="text-muted text-decoration-none small">
+          <i class="bi bi-arrow-left me-1"></i>Dashboard
+        </a>
+        <h1 class="mb-0 mt-1" style="font-size:2rem">Utilisateurs</h1>
+      </div>
+      <form th:action="@{/admin/users}" method="get" class="input-group" style="max-width:280px">
+        <input type="text" name="keyword" class="form-control form-control-sm"
+               th:value="${keyword}" placeholder="Rechercher..."/>
+        <button class="btn btn-sm btn-dark" type="submit"><i class="bi bi-search"></i></button>
+        <a th:if="${keyword}" th:href="@{/admin/users}"
+           class="btn btn-sm btn-outline-secondary"><i class="bi bi-x"></i></a>
+      </form>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-dark">
+          <tr>
+            <th>#</th>
+            <th>Utilisateur</th>
+            <th>Email</th>
+            <th>Rôles</th>
+            <th>Statut</th>
+            <th>Inscrit le</th>
+            <th class="text-end">Actions</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="u : ${users}">
+            <td class="text-muted small" th:text="${u.id}"></td>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold text-white"
+                     style="width:32px; height:32px; background:#1a1a2e; font-size:0.75rem; flex-shrink:0"
+                     th:text="${#strings.substring(u.username,0,1).toUpperCase()}"></div>
+                <div>
+                  <div class="fw-semibold" style="font-size:0.9rem" th:text="${u.username}"></div>
+                  <div class="text-muted" style="font-size:0.75rem" th:text="${u.getFullName()}"></div>
+                </div>
+              </div>
+            </td>
+            <td class="small text-muted" th:text="${u.email}"></td>
+            <td>
+                <span th:each="role : ${u.roles}"
+                      class="badge me-1"
+                      th:classappend="${role.name.name() == 'ROLE_ADMIN'} ? 'bg-danger' : 'bg-secondary'"
+                      th:text="${role.name.name().replace('ROLE_','')}"></span>
+            </td>
+            <td>
+                <span class="badge rounded-pill"
+                      th:classappend="${u.enabled} ? 'bg-success' : 'bg-secondary'"
+                      th:text="${u.enabled} ? 'Actif' : 'Inactif'"></span>
+            </td>
+            <td class="small text-muted"
+                th:text="${#temporals.format(u.createdAt,'dd/MM/yyyy')}"></td>
+            <td>
+              <div class="d-flex gap-1 justify-content-end">
+                <a th:href="@{/users/{un}(un=${u.username})}"
+                   class="btn btn-sm btn-outline-secondary" title="Voir profil">
+                  <i class="bi bi-person"></i>
+                </a>
+                <!-- Activer / Désactiver -->
+                <form th:action="${u.enabled ? '/admin/users/' + u.id + '/disable' : '/admin/users/' + u.id + '/enable'}"
+                      method="post">
+                  <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                  <button class="btn btn-sm"
+                          th:classappend="${u.enabled} ? 'btn-outline-warning' : 'btn-outline-success'"
+                          th:title="${u.enabled} ? 'Désactiver' : 'Activer'">
+                    <i th:classappend="${u.enabled} ? 'bi bi-toggle-on' : 'bi bi-toggle-off'"></i>
+                  </button>
+                </form>
+                <!-- Supprimer -->
+                <form th:action="@{/admin/users/{id}/delete(id=${u.id})}" method="post"
+                      onsubmit="return confirm('Supprimer cet utilisateur ?')">
+                  <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                  <button class="btn btn-sm btn-outline-danger" title="Supprimer">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          <tr th:if="${#lists.isEmpty(users)}">
+            <td colspan="7" class="text-center py-5 text-muted">Aucun utilisateur trouvé.</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</main>
+</body>
+</html>

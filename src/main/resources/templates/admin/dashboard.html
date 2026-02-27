@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(content=~{::main}, pageTitle='Admin', currentPage='admin')}">
+<head><title>Admin</title></head>
+<body>
+<main th:fragment="main">
+
+  <div style="background:linear-gradient(135deg,#1a1a2e,#16213e); padding:2.5rem 0; color:#fff">
+    <div class="container">
+      <h1 class="mb-1" style="font-size:2rem">
+        <i class="bi bi-shield-check me-2" style="color:#e94560"></i>Administration
+      </h1>
+      <p class="text-white-50 mb-0">Tableau de bord de gestion du blog</p>
+    </div>
+  </div>
+
+  <div class="container py-5">
+
+    <!-- Stats cards -->
+    <div class="row g-4 mb-5">
+      <div class="col-sm-6 col-lg-3">
+        <div class="card border-0 shadow-sm p-4 text-center h-100">
+          <div class="mb-2" style="color:#e94560; font-size:2rem"><i class="bi bi-people"></i></div>
+          <div class="fw-bold fs-2" th:text="${totalUsers}">0</div>
+          <div class="text-muted small">Utilisateurs actifs</div>
+          <a th:href="@{/admin/users}" class="stretched-link"></a>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-3">
+        <div class="card border-0 shadow-sm p-4 text-center h-100">
+          <div class="mb-2" style="color:#198754; font-size:2rem"><i class="bi bi-journal-check"></i></div>
+          <div class="fw-bold fs-2" th:text="${totalPublished}">0</div>
+          <div class="text-muted small">Articles publiés</div>
+          <a th:href="@{/admin/posts(status='PUBLISHED')}" class="stretched-link"></a>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-3">
+        <div class="card border-0 shadow-sm p-4 text-center h-100">
+          <div class="mb-2" style="color:#ffc107; font-size:2rem"><i class="bi bi-journal-text"></i></div>
+          <div class="fw-bold fs-2" th:text="${totalDrafts}">0</div>
+          <div class="text-muted small">Brouillons</div>
+          <a th:href="@{/admin/posts(status='DRAFT')}" class="stretched-link"></a>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-3">
+        <div class="card border-0 shadow-sm p-4 text-center h-100"
+             th:classappend="${pendingComments > 0} ? 'border-danger border'">
+          <div class="mb-2" style="color:#dc3545; font-size:2rem"><i class="bi bi-chat-dots"></i></div>
+          <div class="fw-bold fs-2" th:text="${pendingComments}">0</div>
+          <div class="text-muted small">Commentaires en attente</div>
+          <a th:href="@{/admin/comments}" class="stretched-link"></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Nav tabs admin -->
+    <div class="d-flex gap-2 mb-4 flex-wrap">
+      <a th:href="@{/admin/users}" class="btn btn-outline-dark">
+        <i class="bi bi-people me-2"></i>Gérer les utilisateurs
+      </a>
+      <a th:href="@{/admin/posts}" class="btn btn-outline-dark">
+        <i class="bi bi-journal-text me-2"></i>Gérer les articles
+      </a>
+      <a th:href="@{/admin/comments}" class="btn btn-outline-dark"
+         th:classappend="${pendingComments > 0} ? 'btn-outline-danger'">
+        <i class="bi bi-chat-dots me-2"></i>Modérer les commentaires
+        <span th:if="${pendingComments > 0}"
+              class="badge bg-danger ms-1" th:text="${pendingComments}"></span>
+      </a>
+    </div>
+
+    <!-- Commentaires récents -->
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-white fw-semibold py-3">
+        <i class="bi bi-clock me-2"></i>Commentaires récents
+      </div>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item py-3" th:each="comment : ${recentComments}">
+          <div class="d-flex justify-content-between align-items-start gap-3">
+            <div>
+              <span class="fw-semibold" th:text="${comment.author.username}"
+                    style="font-size:0.9rem"></span>
+              <span class="text-muted mx-2 small">sur</span>
+              <a th:href="@{/posts/{id}(id=${comment.post.id})}"
+                 th:text="${comment.post.title}"
+                 class="text-decoration-none small fw-semibold"></a>
+              <p class="mb-0 mt-1 text-muted small"
+                 th:text="${#strings.abbreviate(comment.content, 100)}"></p>
+            </div>
+            <div class="d-flex gap-1 flex-shrink-0">
+              <span th:if="${!comment.approved}"
+                    class="badge bg-warning text-dark">En attente</span>
+              <small class="text-muted"
+                     th:text="${#temporals.format(comment.createdAt, 'dd/MM HH:mm')}"></small>
+            </div>
+          </div>
+        </li>
+        <li class="list-group-item py-4 text-center text-muted"
+            th:if="${#lists.isEmpty(recentComments)}">
+          Aucun commentaire récent.
+        </li>
+      </ul>
+    </div>
+
+  </div>
+</main>
+</body>
+</html>

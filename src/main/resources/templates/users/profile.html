@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{layout/base :: layout(content=~{::main}, pageTitle=${user.username}, currentPage='')}">
+<head><title>Profil</title></head>
+<body>
+<main th:fragment="main">
+
+    <!-- Banner -->
+    <div style="background:linear-gradient(135deg,#1a1a2e,#16213e); padding:3rem 0; color:#fff">
+        <div class="container d-flex align-items-center gap-4 flex-wrap">
+            <th:block>
+                <img th:if="${user.profilePicture != null}" th:src="${user.profilePicture}" alt="avatar"
+                     class="rounded-circle flex-shrink-0" style="width:80px; height:80px; object-fit:cover"/>
+                <div th:if="${user.profilePicture == null}"
+                     class="rounded-circle d-flex align-items-center justify-content-center fw-bold text-white flex-shrink-0"
+                     style="width:80px; height:80px; background:#e94560; font-size:2rem; font-family:'Playfair Display',serif"
+                     th:text="${#strings.substring(user.username,0,1).toUpperCase()}"></div>
+            </th:block>
+            <div>
+                <h1 th:text="${user.getFullName()}" class="mb-1" style="font-size:2rem"></h1>
+                <p class="text-white-50 mb-1">
+                    <i class="bi bi-at me-1"></i><span th:text="${user.username}"></span>
+                </p>
+                <p th:if="${user.bio}" th:text="${user.bio}"
+                   class="text-white-50 mb-0 small"></p>
+            </div>
+            <div class="ms-auto d-flex gap-4 text-center">
+                <div>
+                    <div class="fw-bold fs-4" th:text="${postCount}">0</div>
+                    <div class="text-white-50 small">Articles</div>
+                </div>
+                <div>
+                    <div class="fw-bold fs-4" th:text="${totalViews}">0</div>
+                    <div class="text-white-50 small">Vues</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container py-5">
+        <div class="row">
+            <!-- Articles récents -->
+            <div class="col-lg-8">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 style="font-size:1.5rem">Articles récents</h2>
+                    <div sec:authorize="isAuthenticated()">
+                        <a th:if="${user.username == #authentication.name}"
+                           th:href="@{/users/me/edit}"
+                           class="btn btn-sm btn-outline-dark">
+                            <i class="bi bi-gear me-1"></i>Modifier le profil
+                        </a>
+                    </div>
+                </div>
+
+                <div th:if="${#lists.isEmpty(recentPosts)}" class="text-muted text-center py-5">
+                    <i class="bi bi-journal-x fs-2 d-block mb-2"></i>
+                    Aucun article publié.
+                </div>
+
+                <div th:each="post : ${recentPosts}" class="card border-0 shadow-sm mb-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start gap-3">
+                            <div>
+                                <h5 class="mb-1" style="font-size:1rem">
+                                    <a th:href="@{/posts/{id}(id=${post.id})}"
+                                       th:text="${post.title}"
+                                       class="text-decoration-none text-dark"></a>
+                                </h5>
+                                <p class="text-muted small mb-2"
+                                   th:text="${#strings.abbreviate(post.summary ?: post.content, 120)}"></p>
+                                <div class="d-flex gap-3">
+                                    <small class="text-muted">
+                                        <i class="bi bi-eye me-1"></i><span th:text="${post.viewsCount}"></span>
+                                    </small>
+                                    <small class="text-muted">
+                                        <i class="bi bi-chat me-1"></i>
+                                        <span th:text="${#lists.size(post.comments)}"></span>
+                                    </small>
+                                    <small class="text-muted"
+                                           th:text="${post.publishedAt != null} ? ${#temporals.format(post.publishedAt,'dd MMM yyyy')} : ''">
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar info -->
+            <div class="col-lg-4 mt-4 mt-lg-0">
+                <div class="card border-0 shadow-sm p-4">
+                    <h6 class="fw-bold mb-3 text-uppercase text-muted" style="font-size:0.75rem; letter-spacing:2px">
+                        Informations
+                    </h6>
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2" th:if="${user.email}" sec:authorize="hasRole('ADMIN')">
+                            <i class="bi bi-envelope me-2 text-muted"></i>
+                            <span th:text="${user.email}" class="small"></span>
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-calendar me-2 text-muted"></i>
+                            <span class="small">Membre depuis
+                <span th:text="${#temporals.format(user.createdAt, 'MMMM yyyy')}"></span>
+              </span>
+                        </li>
+                        <li>
+                            <i class="bi bi-circle-fill me-2"
+                               th:classappend="${user.enabled} ? 'text-success' : 'text-danger'"
+                               style="font-size:0.5rem; vertical-align:middle"></i>
+                            <span class="small" th:text="${user.enabled} ? 'Compte actif' : 'Compte désactivé'"></span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+</body>
+</html>
+

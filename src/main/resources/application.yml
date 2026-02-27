@@ -1,0 +1,19 @@
+spring:
+  # Configuration Email
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: email
+    password:  pass # Mot de passe d'application Google
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+        transport:
+          protocol: smtp
+
+app:
+  base-url: http://localhost:8080

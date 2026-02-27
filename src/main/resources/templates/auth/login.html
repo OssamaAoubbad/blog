@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(content=~{::main}, pageTitle='Connexion', currentPage='')}">
+<head><title>Connexion</title></head>
+<body>
+<main th:fragment="main">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-sm-10 col-md-6 col-lg-5">
+
+                <div class="text-center mb-4">
+                    <h1 style="font-size:2rem">Connexion</h1>
+                    <p class="text-muted">Accédez à votre compte aoubbad-blog</p>
+                </div>
+
+                <div class="card border-0 shadow-sm p-4">
+
+                    <!-- Erreur login -->
+                    <div th:if="${param.error}" class="alert alert-danger">
+                        <i class="bi bi-exclamation-circle me-2"></i>
+                        Identifiants incorrects. Vérifiez votre nom d'utilisateur et mot de passe.
+                    </div>
+
+                    <!-- Succès inscription -->
+                    <div th:if="${param.logout}" class="alert alert-success">
+                        <i class="bi bi-check-circle me-2"></i>
+                        Vous avez été déconnecté avec succès.
+                    </div>
+
+                    <div th:if="${successMessage}" class="alert alert-success">
+                        <i class="bi bi-check-circle me-2"></i>
+                        <span th:text="${successMessage}"></span>
+                    </div>
+
+                    <form th:action="@{/auth/login}" method="post">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+                        <div class="mb-3">
+                            <label for="usernameOrEmail" class="form-label fw-semibold">
+                                Nom d'utilisateur ou Email
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                <input type="text" id="usernameOrEmail" name="usernameOrEmail"
+                                       class="form-control" placeholder="ex: ossama.aoubbad ou ossama.aoubbad@email.com"
+                                       required autofocus/>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="password" class="form-label fw-semibold">Mot de passe</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                                <input type="password" id="password" name="password"
+                                       class="form-control" placeholder="********" required/>
+                                <button class="btn btn-outline-secondary" type="button"
+                                        onclick="togglePassword()">
+                                    <i class="bi bi-eye" id="eyeIcon"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="remember-me" id="rememberMe"/>
+                                <label class="form-check-label small" for="rememberMe">Se souvenir de moi</label>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn w-100 py-2 fw-semibold"
+                                style="background:#e94560; color:#fff; border-radius:8px">
+                            <i class="bi bi-box-arrow-in-right me-2"></i>Se connecter
+                        </button>
+                    </form>
+
+                    <hr class="my-4"/>
+
+                    <p class="text-center text-muted small mb-0">
+                        Pas encore de compte ?
+                        <a th:href="@{/auth/register}" class="fw-semibold" style="color:#e94560">
+                            Créer un compte
+                        </a>
+                    </p>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function togglePassword() {
+            const input   = document.getElementById('password');
+            const icon    = document.getElementById('eyeIcon');
+            const visible = input.type === 'text';
+            input.type = visible ? 'password' : 'text';
+            icon.className = visible ? 'bi bi-eye' : 'bi bi-eye-slash';
+        }
+    </script>
+</main>
+</body>
+</html>
+
+
