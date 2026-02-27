@@ -16,7 +16,7 @@ import com.resend.Resend;
 import jakarta.mail.MessagingException;
 import java.nio.charset.StandardCharsets;
 
-/*
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -103,72 +103,4 @@ public class EmailService {
         mailSender.send(message);
     }
 }
-*/
-@Service
-@Slf4j
-@RequiredArgsConstructor
-public class EmailService {
 
-    private final SpringTemplateEngine templateEngine;
-
-    @Value("${resend.api.key}")
-    private String resendApiKey;
-
-    @Value("${app.mail.from}")
-    private String fromEmail;
-
-    @Value("${app.base-url}")
-    private String baseUrl;
-
-    @Async
-    public void sendVerificationEmail(String to, String username, String token) {
-        try {
-            String verificationUrl = baseUrl + "/auth/verify-email?token=" + token;
-            Context context = new Context();
-            context.setVariable("username", username);
-            context.setVariable("verificationUrl", verificationUrl);
-            String htmlContent = templateEngine.process("email-verification", context);
-            sendEmail(to, "Verification de votre compte aoubbad-blog", htmlContent);
-        } catch (Exception e) {
-            log.error("Error sending verification email to {}: {}", to, e.getMessage());
-        }
-    }
-
-    @Async
-    public void sendPasswordResetEmail(String to, String username, String token) {
-        try {
-            String resetUrl = baseUrl + "/api/auth/reset-password?token=" + token;
-            Context context = new Context();
-            context.setVariable("username", username);
-            context.setVariable("resetUrl", resetUrl);
-            String htmlContent = templateEngine.process("password-reset", context);
-            sendEmail(to, "Password reset", htmlContent);
-        } catch (Exception e) {
-            log.error("Error sending password reset email to {}: {}", to, e.getMessage());
-        }
-    }
-
-    @Async
-    public void sendWelcomeEmail(String to, String username) {
-        try {
-            Context context = new Context();
-            context.setVariable("username", username);
-            String htmlContent = templateEngine.process("welcome-email", context);
-            sendEmail(to, "Bienvenue sur aoubbad-blog", htmlContent);
-        } catch (Exception e) {
-            log.error("Error sending welcome email to {}: {}", to, e.getMessage());
-        }
-    }
-
-    private void sendEmail(String to, String subject, String htmlContent) {
-        Resend resend = new Resend(resendApiKey);
-        SendEmailRequest request = SendEmailRequest.builder()
-            .from(fromEmail)
-            .to(to)
-            .subject(subject)
-            .html(htmlContent)
-            .build();
-        resend.emails().send(request);
-        log.info("Email sent to: {}", to);
-    }
-}
